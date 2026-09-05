@@ -7,11 +7,29 @@ import transactionRoutes from "./routes/transactionRoute.js";
 import appointmentRoutes from "./routes/appointmentRoutes.js";
 
 const app = express();
+
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "https://hospital-management-system-eta-brown-31.vercel.app",
+  "https://hospital-management-system-i8jg0rncd-syed-yahya.vercel.app"
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: "https://hospital-management-system-eta-brown-31.vercel.app",
+    origin: function (origin, callback) {
+      // Allow requests with no origin (e.g. Postman, mobile apps) or matching origins/Vercel domains
+      if (!origin || allowedOrigins.includes(origin) || origin.endsWith(".vercel.app")) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
+
 app.use(express.json());
 
 app.use("/api/users", userRoutes);
@@ -20,10 +38,11 @@ app.use("/api/transactions", transactionRoutes);
 app.use("/api/appointments", appointmentRoutes);
 
 app.get("/", (req, res) => {
-    res.json({
-        message: "Hospital Management API is running"
-    });
+  res.json({
+    message: "Hospital Management API is running"
+  });
 });
+
 app.use(errorHandler);
 
 export default app;
