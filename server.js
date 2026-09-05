@@ -7,13 +7,11 @@ import transactionRoutes from "./routes/transactionRoute.js";
 import appointmentRoutes from "./routes/appointmentRoutes.js";
 
 const app = express();
-
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://hospital-management-system-eta-brown-31.vercel.app",
   })
 );
-
 app.use(express.json());
 
 app.use("/api/users", userRoutes);
