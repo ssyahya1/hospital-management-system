@@ -17,7 +17,7 @@ const Navbar = ({ onToggleSidebar }) => {
   return (
     <header className="navbar">
       <div className="navbar-left">
-        {/* Hamburger Toggle Button for Mobile */}
+        {/* Mobile Toggle Button */}
         <button
           type="button"
           className="mobile-menu-btn"
@@ -29,7 +29,7 @@ const Navbar = ({ onToggleSidebar }) => {
 
         <div className="navbar-page-icon">+</div>
 
-        <div>
+        <div className="navbar-title-group">
           <h2>Hospital Management System</h2>
           <span>Healthcare Management Portal</span>
         </div>

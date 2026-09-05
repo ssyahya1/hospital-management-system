@@ -2532,3 +2532,43 @@ button {
     padding: 1rem;
   }
 }
+
+/* Default: Hide hamburger button on desktop */
+.mobile-menu-btn {
+  display: none !important;
+}
+
+/* Mobile Screen Adjustments (768px and smaller) */
+@media (max-width: 768px) {
+  /* Force the Hamburger Button to show on mobile */
+  .mobile-menu-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    background: #1e293b !important; /* Visible dark background */
+    color: #ffffff !important;      /* Contrast text color */
+    border: 1px solid #334155 !important;
+    font-size: 1.5rem !important;
+    line-height: 1 !important;
+    padding: 6px 12px !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    margin-right: 10px !important;
+    flex-shrink: 0 !important;
+    z-index: 1001 !important;
+  }
+
+  .navbar-left {
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  /* Hide long system text titles on mobile so navbar doesn't overflow */
+  .navbar-title-group span {
+    display: none !important;
+  }
+  
+  .navbar-title-group h2 {
+    font-size: 1rem !important;
+  }
+}
