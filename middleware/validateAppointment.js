@@ -1,0 +1,71 @@
+export const validateAppointment = (req, res, next) => {
+    
+    const {
+        patient_id,
+        appointment_date,
+        appointment_time
+    } = req.body;
+
+    
+    if (
+        patient_id === undefined ||
+        typeof patient_id !== "number" ||
+        patient_id <= 0
+    ) {
+        return res.status(400).json({
+            message: "Invalid patient_id. It must be a positive number."
+        });
+    }
+
+
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+
+    if (
+        appointment_date === undefined ||
+        typeof appointment_date !== "string" ||
+        !dateRegex.test(appointment_date)
+    ) {
+        return res.status(400).json({
+            message: "Invalid appointment_date. Use YYYY-MM-DD."
+        });
+    }
+
+   
+    const today = new Date().toISOString().split("T")[0];
+
+    if (appointment_date < today) {
+        return res.status(400).json({
+            message: "Invalid appointment_date. It cannot be in the past."
+        });
+    }
+
+    
+    const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+
+    if (
+        appointment_time === undefined ||
+        typeof appointment_time !== "string" ||
+        !timeRegex.test(appointment_time)
+    ) {
+        return res.status(400).json({
+            message: "Invalid appointment_time. Use HH:MM."
+        });
+    }
+
+    
+    const now = new Date();
+
+    const currentDate = now.toISOString().split("T")[0];
+    const currentTime = now.toTimeString().slice(0, 5);
+
+    if (
+        appointment_date === currentDate &&
+        appointment_time <= currentTime
+    ) {
+        return res.status(400).json({
+            message: "Appointment time cannot be in the past."
+        });
+    }
+
+    next();
+};
