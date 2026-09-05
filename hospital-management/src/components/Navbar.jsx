@@ -1,8 +1,7 @@
-
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-const Navbar = () => {
+const Navbar = ({ onToggleSidebar }) => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
@@ -18,6 +17,16 @@ const Navbar = () => {
   return (
     <header className="navbar">
       <div className="navbar-left">
+        {/* Hamburger Toggle Button for Mobile */}
+        <button
+          type="button"
+          className="mobile-menu-btn"
+          onClick={onToggleSidebar}
+          aria-label="Toggle navigation"
+        >
+          ☰
+        </button>
+
         <div className="navbar-page-icon">+</div>
 
         <div>

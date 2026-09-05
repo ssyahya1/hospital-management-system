@@ -1,8 +1,7 @@
-
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, onClose }) => {
   const { role, user } = useAuth();
 
   const patientLinks = [
@@ -43,7 +42,7 @@ const Sidebar = () => {
     : "User";
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isOpen ? "open" : ""}`}>
       {/* Brand */}
       <div className="sidebar-brand">
         <div className="sidebar-logo">+</div>
@@ -77,6 +76,7 @@ const Sidebar = () => {
             key={link.path}
             to={link.path}
             end={link.path === `/${role}`}
+            onClick={onClose}
             className={({ isActive }) =>
               isActive ? "sidebar-link active" : "sidebar-link"
             }
