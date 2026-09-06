@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hospital-management-system-eta-brown-31.vercel.app/sitemap.xml
