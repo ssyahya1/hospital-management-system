@@ -1,17 +1,19 @@
 import pool from "../db/db.js";
 
 export const validateAppointmentUpdate = async (req, res, next) => {
-
     const {
         appointment_date,
         appointment_time,
-        status
+        status,
+        doctor_id
     } = req.body;
 
+    // At least one field must be provided
     if (
         appointment_date === undefined &&
         appointment_time === undefined &&
-        status === undefined
+        status === undefined &&
+        doctor_id === undefined
     ) {
         return res.status(400).json({
             message: "At least one field is required"
@@ -19,8 +21,7 @@ export const validateAppointmentUpdate = async (req, res, next) => {
     }
 
     try {
-
-        // Get the existing appointment
+        // Get existing appointment
         const result = await pool.query(
             `
             SELECT appointment_date, appointment_time
@@ -54,9 +55,20 @@ export const validateAppointmentUpdate = async (req, res, next) => {
                     .toString()
                     .slice(0, 5);
 
+        // Validate doctor_id
+        if (doctor_id !== undefined) {
+            if (
+                typeof doctor_id !== "number" ||
+                doctor_id <= 0
+            ) {
+                return res.status(400).json({
+                    message: "Invalid doctor_id. It must be a positive number."
+                });
+            }
+        }
+
         // Validate appointment date
         if (appointment_date !== undefined) {
-
             const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
             if (
@@ -79,7 +91,6 @@ export const validateAppointmentUpdate = async (req, res, next) => {
 
         // Validate appointment time
         if (appointment_time !== undefined) {
-
             const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
             if (
@@ -109,7 +120,6 @@ export const validateAppointmentUpdate = async (req, res, next) => {
 
         // Validate status
         if (status !== undefined) {
-
             const validStatuses = [
                 "scheduled",
                 "completed",
@@ -121,7 +131,8 @@ export const validateAppointmentUpdate = async (req, res, next) => {
                 !validStatuses.includes(status)
             ) {
                 return res.status(400).json({
-                    message: "Invalid status. Use scheduled, completed, or cancelled."
+                    message:
+                        "Invalid status. Use scheduled, completed, or cancelled."
                 });
             }
         }

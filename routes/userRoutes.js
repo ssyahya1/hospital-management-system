@@ -7,7 +7,9 @@ import {
     getUsers,
     updateUser,
     deactivateUser,
-    reactivateUser
+    reactivateUser,
+    forgotPassword,
+    resetPassword
 } from "../controllers/usercontroller.js";
 
 import { authMiddleware } from "../middleware/authMiddleware.js";
@@ -21,6 +23,8 @@ router.post("/", apiKeyMiddleware,authMiddleware, adminMiddleware, createUsers);
 
 // Login
 router.post("/login", loginUser);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
 
 // Get logged-in user's profile
 router.get("/me", authMiddleware, getMyProfile);

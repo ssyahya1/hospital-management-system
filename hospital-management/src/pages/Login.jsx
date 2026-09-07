@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -48,7 +47,8 @@ const Login = () => {
       }
     } catch (error) {
       setError(
-        error.message || "Login failed. Please check your credentials."
+        error.message ||
+          "Login failed. Please check your credentials."
       );
     } finally {
       setLoading(false);
@@ -58,7 +58,7 @@ const Login = () => {
   return (
     <div className="auth-page">
       <div className="auth-container">
-        {/* Left Side */}
+
         <div className="auth-brand">
           <div className="hospital-icon">+</div>
 
@@ -87,14 +87,18 @@ const Login = () => {
           </div>
         </div>
 
-        {/* Right Side */}
         <div className="auth-card">
+
           <div className="auth-header">
             <h2>Welcome Back</h2>
-            <p>Sign in to access your account</p>
+
+            <p>
+              Sign in to access your account
+            </p>
           </div>
 
           <form onSubmit={handleSubmit}>
+
             {error && (
               <div className="alert alert-error">
                 {error}
@@ -102,7 +106,9 @@ const Login = () => {
             )}
 
             <div className="form-group">
-              <label htmlFor="email">Email Address</label>
+              <label htmlFor="email">
+                Email Address
+              </label>
 
               <input
                 id="email"
@@ -117,12 +123,19 @@ const Login = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="password">Password</label>
+              <label htmlFor="password">
+                Password
+              </label>
 
               <div className="password-wrapper">
+
                 <input
                   id="password"
-                  type={showPassword ? "text" : "password"}
+                  type={
+                    showPassword
+                      ? "text"
+                      : "password"
+                  }
                   name="password"
                   placeholder="Enter your password"
                   value={formData.password}
@@ -134,14 +147,48 @@ const Login = () => {
                 <button
                   type="button"
                   className="password-toggle"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() =>
+                    setShowPassword(!showPassword)
+                  }
                   aria-label={
-                    showPassword ? "Hide password" : "Show password"
+                    showPassword
+                      ? "Hide password"
+                      : "Show password"
                   }
                 >
-                  {showPassword ? "Hide" : "Show"}
+                  {showPassword
+                    ? "Hide"
+                    : "Show"}
                 </button>
+
               </div>
+            </div>
+
+            {/* Forgot Password */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                marginBottom: "15px",
+              }}
+            >
+              <button
+                type="button"
+                onClick={() =>
+                  navigate("/forgot-password")
+                }
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  color: "#2563eb",
+                  padding: "4px 0",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                }}
+              >
+                Forgot Password?
+              </button>
             </div>
 
             <button
@@ -149,13 +196,19 @@ const Login = () => {
               className="btn btn-primary btn-full"
               disabled={loading}
             >
-              {loading ? "Signing in..." : "Sign In"}
+              {loading
+                ? "Signing in..."
+                : "Sign In"}
             </button>
+
           </form>
 
           <div className="auth-footer">
-            <span>Secure Healthcare Portal</span>
+            <span>
+              Secure Healthcare Portal
+            </span>
           </div>
+
         </div>
       </div>
     </div>

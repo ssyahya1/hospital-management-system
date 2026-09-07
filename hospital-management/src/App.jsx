@@ -1,3 +1,4 @@
+
 import PatientDashboard from "./pages/patient/PatientDashboard";
 import PatientProfile from "./pages/patient/PatientProfile";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
@@ -18,15 +19,26 @@ import AdminAppointments from "./pages/admin/AdminAppointments";
 import AdminTransactions from "./pages/admin/AdminTransactions";
 import AddUser from "./pages/admin/AddUser";
 import EditUser from "./pages/admin/EditUser";
-
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          {/* Public Route */}
+          {/* Public Routes */}
           <Route path="/login" element={<Login />} />
+
+          <Route
+            path="/forgot-password"
+            element={<ForgotPassword />}
+          />
+
+          <Route
+            path="/reset-password"
+            element={<ResetPassword />}
+          />
 
           {/* Patient Routes */}
           <Route
@@ -46,6 +58,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/patient/appointments"
             element={
@@ -54,6 +67,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/patient/transactions"
             element={
@@ -72,6 +86,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/doctor/appointments"
             element={
@@ -80,6 +95,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/doctor/appointments/create"
             element={
@@ -88,22 +104,24 @@ function App() {
               </ProtectedRoute>
             }
           />
-           <Route
-              path="/doctor/appointments/update"
-              element={
-                <ProtectedRoute allowedRoles={["doctor"]}>
-                  <UpdateAppointment />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/doctor/patients"
-              element={
-                <ProtectedRoute allowedRoles={["doctor"]}>
-                  <PatientInformation />
-                </ProtectedRoute>
-              }
-            />
+
+          <Route
+            path="/doctor/appointments/update"
+            element={
+              <ProtectedRoute allowedRoles={["doctor"]}>
+                <UpdateAppointment />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/doctor/patients"
+            element={
+              <ProtectedRoute allowedRoles={["doctor"]}>
+                <PatientInformation />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Admin Routes */}
           <Route
@@ -114,6 +132,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/admin/users"
             element={
@@ -121,21 +140,26 @@ function App() {
                 <AdminUsers />
               </ProtectedRoute>
             }
-          /><Route
-              path="/admin/users/add"
-              element={
-                <ProtectedRoute allowedRoles={["admin"]}>
-                  <AddUser />
-                </ProtectedRoute>
-              }
-          /><Route
-              path="/admin/users/edit/:id"
-              element={
-                <ProtectedRoute allowedRoles={["admin"]}>
-                  <EditUser />
-                </ProtectedRoute>
-              }
-            />
+          />
+
+          <Route
+            path="/admin/users/add"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <AddUser />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/users/edit/:id"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <EditUser />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/admin/patients"
             element={
@@ -144,6 +168,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/admin/appointments"
             element={
@@ -151,7 +176,8 @@ function App() {
                 <AdminAppointments />
               </ProtectedRoute>
             }
-          />  
+          />
+
           <Route
             path="/admin/transactions"
             element={
@@ -162,10 +188,16 @@ function App() {
           />
 
           {/* Default */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route
+            path="/"
+            element={<Navigate to="/login" replace />}
+          />
 
           {/* Unknown URL */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route
+            path="*"
+            element={<Navigate to="/login" replace />}
+          />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

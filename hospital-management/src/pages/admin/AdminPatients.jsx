@@ -15,6 +15,7 @@ const AdminPatients = () => {
         setError("");
 
         const data = await api.get("/api/patients");
+        
 
         setPatients(
           Array.isArray(data)
