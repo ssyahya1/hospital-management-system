@@ -6,6 +6,8 @@ import{Resend} from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const createUsers = async (req, res, next) => {
+    const client = await pool.connect();
+
     try {
         const { name, email, password, role } = req.body;
 
@@ -23,7 +25,7 @@ export const createUsers = async (req, res, next) => {
             });
         }
 
-        const existingUser = await pool.query(
+        const existingUser = await client.query(
             "SELECT id FROM users WHERE email = $1",
             [email]
         );
@@ -36,25 +38,45 @@ export const createUsers = async (req, res, next) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const result = await pool.query(
+        await client.query("BEGIN");
+
+        const result = await client.query(
             `
             INSERT INTO users (name, email, password, role)
             VALUES ($1, $2, $3, $4)
-            RETURNING id, name, email, role,is_active, created_at
+            RETURNING id, name, email, role, is_active, created_at
             `,
             [name, email, hashedPassword, role]
         );
 
+        const newUser = result.rows[0];
+
+        // Create a patient record automatically
+        // when the new user's role is patient.
+        if (role === "patient") {
+            await client.query(
+                `
+                INSERT INTO patients (user_id)
+                VALUES ($1)
+                `,
+                [newUser.id]
+            );
+        }
+
+        await client.query("COMMIT");
+
         res.status(201).json({
             message: "User created successfully",
-            user: result.rows[0]
+            user: newUser
         });
 
     } catch (error) {
+        await client.query("ROLLBACK");
         next(error);
+    } finally {
+        client.release();
     }
 };
-
 
 export const loginUser = async (req, res, next) => {
     try {
