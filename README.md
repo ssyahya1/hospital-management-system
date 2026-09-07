@@ -1,42 +1,54 @@
-# 🏥 Hospital Management System
+# Hospital Management System
 
-A full-stack Hospital Management System designed to manage patients, doctors, appointments, users, and transactions through a secure web application.
+A full-stack Hospital Management System built to manage patients, doctors, appointments, users, and transactions through a secure web application.
 
-This project is being built as a practical full-stack application to understand how a real-world system works from the frontend and REST API to authentication, authorization, and database operations.
+I built this project as a practical full-stack application to understand how a real-world system works across the frontend, backend, database, authentication, authorization, and deployment.
+
+The application is deployed and can be accessed through the production frontend.
 
 ---
 
-## 📌 Overview
+## Overview
 
 The system is divided into two main parts:
 
-* **Frontend** — Provides the user interface for interacting with the system.
-* **Backend** — Provides the REST API and handles authentication, authorization, validation, business logic, and database operations.
+* **Frontend** — A React application that provides the user interface for patients, doctors, and administrators.
+* **Backend** — A Node.js and Express REST API that handles authentication, authorization, validation, business logic, and database operations.
 
-The backend uses **PostgreSQL** for data storage and uses **JWT authentication**, **API-key protection**, and **role-based authorization** to secure the application.
+PostgreSQL is used as the database. The application uses JWT authentication, API-key protection, role-based authorization, password hashing, input validation, and ownership checks to protect resources.
+
+The frontend communicates with the backend through REST API requests.
 
 ---
 
-# ✨ Features
+## Features
 
-## 👤 User Management
+### User Management
 
-* Create new users
-* User login
+* Create patient, doctor, and administrator accounts
+* User login and authentication
 * Password hashing using bcrypt
 * JWT-based authentication
+* Password reset through email
 * Retrieve the currently authenticated user's profile
-* Support for patient, doctor, and admin roles
+* Edit user information
+* Change user roles
+* Activate and deactivate user accounts
+* Prevent deactivated users from accessing protected resources
+* Validate duplicate email addresses
 
-## 🧑‍⚕️ Patient Management
+### Patient Management
 
 * Create patient profiles
+* Store date of birth and blood group
 * Retrieve patient information
 * Allow patients to access their own profile
-* Restrict patient information based on user roles
+* Allow authorized doctors and administrators to access patient information
+* Restrict patient information using role-based authorization
 * Validate patient information before storing it
+* Automatically create the patient record when a patient user is created
 
-## 📅 Appointment Management
+### Appointment Management
 
 * Create appointments
 * View appointments
@@ -44,24 +56,26 @@ The backend uses **PostgreSQL** for data storage and uses **JWT authentication**
 * View individual appointments
 * Update appointment date and time
 * Update appointment status
+* Cancel appointments
 * Prevent appointments from being created in the past
 * Prevent appointments from being updated to the past
-* Prevent doctors from having duplicate appointments at the same time
+* Prevent doctors from having duplicate appointments at the same date and time
 * Restrict doctors to their own appointments
 * Prevent patients from viewing other patients' appointments
 * Control appointment updates using role-based authorization
 
-## 💳 Transaction Management
+### Transaction Management
 
 * Create patient transactions
-* View all transactions for authorized users
+* View transactions for authorized users
 * Allow patients to view their own transactions
 * View individual transactions
 * Update transaction status
 * Validate transaction information
 * Prevent updates to transactions that are no longer pending
+* Restrict transaction management to authorized roles
 
-## 🔐 Security
+### Authentication and Security
 
 * JWT authentication
 * Password hashing with bcrypt
@@ -73,26 +87,29 @@ The backend uses **PostgreSQL** for data storage and uses **JWT authentication**
 * Protected routes
 * Environment variables for sensitive configuration
 * Parameterized PostgreSQL queries
+* Centralized error handling
+* Deactivated account protection
+* Secure password reset flow using email
 
 ---
 
-# 👥 User Roles
+## User Roles
 
-The system currently supports three main roles:
+The application currently supports three main roles.
 
-| Role        | Main Access                                                   |
-| ----------- | ------------------------------------------------------------- |
-| **Patient** | Own profile, appointments, and transactions                   |
-| **Doctor**  | Manage appointments and access authorized patient information |
-| **Admin**   | Administrative features and transaction management            |
+| Role        | Main Access                                               |
+| ----------- | --------------------------------------------------------- |
+| **Patient** | Own profile, appointments, and transactions               |
+| **Doctor**  | Appointment management and authorized patient information |
+| **Admin**   | User, patient, appointment, and transaction management    |
 
-Access to protected endpoints is controlled through authentication and role-based authorization.
+Access to protected resources is controlled using authentication and role-based authorization.
 
 ---
 
-# 🛠️ Technologies Used
+## Technologies Used
 
-## Backend
+### Backend
 
 * **Node.js** — JavaScript runtime
 * **Express.js** — REST API framework
@@ -101,26 +118,31 @@ Access to protected endpoints is controlled through authentication and role-base
 * **bcrypt** — Password hashing
 * **jsonwebtoken** — JWT authentication
 * **dotenv** — Environment variable management
+* **Resend** — Password reset email delivery
 
-## Frontend
+### Frontend
 
 * **React** — Frontend library
+* **Vite** — Frontend development and build tool
 * **JavaScript** — Application logic
 * **HTML** — Page structure
 * **CSS** — Styling
 
-The frontend communicates with the backend through REST API requests.
+### Deployment
+
+* **Vercel** — Frontend and backend deployment
+* **Neon** — PostgreSQL database
 
 ---
 
-# 🏗️ System Architecture
+## System Architecture
 
 The application follows a simple three-layer architecture:
 
 ```text
 ┌─────────────────────────┐
 │        Frontend         │
-│          React          │
+│       React + Vite      │
 └────────────┬────────────┘
              │
              │ HTTP / REST API
@@ -138,79 +160,84 @@ The application follows a simple three-layer architecture:
 └─────────────────────────┘
 ```
 
-### How it works
+### How the application works
 
-1. The user interacts with the React frontend.
-2. The frontend sends HTTP requests to the Express.js backend.
-3. The backend authenticates the user and checks their permissions.
-4. Middleware validates the incoming request.
-5. Controllers handle the application logic.
-6. The backend communicates with PostgreSQL.
-7. PostgreSQL returns the requested data.
-8. The backend sends a JSON response back to the frontend.
+1. A user interacts with the React frontend.
+2. The frontend sends an HTTP request to the Express backend.
+3. Authentication middleware verifies the user's JWT.
+4. The backend checks the user's current account status.
+5. Role-based middleware determines whether the user has permission to access the resource.
+6. Validation middleware checks incoming data.
+7. Controllers handle the application logic.
+8. The backend communicates with PostgreSQL.
+9. PostgreSQL returns the requested data.
+10. The backend sends a JSON response back to the frontend.
+11. The frontend updates the user interface based on the response.
 
 This separation keeps the frontend, backend logic, and database operations organized and easier to maintain.
 
 ---
 
-# 📂 Project Structure
+## Project Structure
 
 ```text
-Hospital-Management-System/
+Hospital-Backend/
 │
-├── backend/
-│   │
-│   ├── controllers/
-│   │   ├── userController.js
-│   │   ├── patientController.js
-│   │   ├── appointmentController.js
-│   │   └── transactionController.js
-│   │
-│   ├── db/
-│   │   └── db.js
-│   │
-│   ├── middleware/
-│   │   ├── authMiddleware.js
-│   │   ├── roleMiddleware.js
-│   │   ├── apiKeyMiddleware.js
-│   │   ├── validatePatient.js
-│   │   ├── validateAppointment.js
-│   │   ├── validateAppointmentUpdate.js
-│   │   ├── validateTransaction.js
-│   │   ├── validateTransactionUpdate.js
-│   │   └── errorHandler.js
-│   │
-│   ├── routes/
-│   │   ├── userRoutes.js
-│   │   ├── patientRoutes.js
-│   │   ├── appointmentRoutes.js
-│   │   └── transactionRoute.js
-│   │
-│   ├── .env
-│   ├── package.json
-│   └── server.js
+├── controllers/
+│   ├── usercontroller.js
+│   ├── patientController.js
+│   ├── appointmentController.js
+│   └── transactionController.js
 │
-├── frontend/
+├── db/
+│   └── db.js
+│
+├── middleware/
+│   ├── authMiddleware.js
+│   ├── roleMiddleware.js
+│   ├── apiKeyMiddleware.js
+│   ├── validatePatient.js
+│   ├── validateAppointment.js
+│   ├── validateAppointmentUpdate.js
+│   ├── validateTransaction.js
+│   ├── validateTransactionUpdate.js
+│   └── errorHandler.js
+│
+├── routes/
+│   ├── userRoutes.js
+│   ├── patientRoutes.js
+│   ├── appointmentRoutes.js
+│   └── transactionRoute.js
+│
+├── hospital-management/
 │   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   └── ...
 │   ├── public/
 │   ├── package.json
 │   └── ...
 │
+├── .env
+├── package.json
+├── server.js
 └── README.md
 ```
 
 ---
 
-# 🔙 Backend
+# Backend
 
 The backend is responsible for:
 
 * REST API endpoints
 * Authentication
 * Authorization
-* Validation
+* Input validation
 * Business logic
 * Database communication
+* Password reset
 * Error handling
 * Security
 
@@ -220,13 +247,15 @@ The backend runs locally on:
 http://localhost:3000
 ```
 
+The backend is also deployed to Vercel for production use.
+
 ---
 
-# 🔑 Authentication
+# Authentication
 
-The application uses **JSON Web Tokens (JWT)** for authentication.
+The application uses JSON Web Tokens (JWT) for authentication.
 
-When a user successfully logs in, the backend generates a JWT containing information about the authenticated user and their role.
+When a user successfully logs in, the backend generates a JWT containing the authenticated user's ID and role.
 
 Protected endpoints require the token in the request header:
 
@@ -234,28 +263,55 @@ Protected endpoints require the token in the request header:
 Authorization: Bearer <token>
 ```
 
-The authentication middleware verifies the token before allowing the request to continue.
+The authentication middleware verifies the token and then checks the user's current status in the database.
 
-Invalid or expired tokens return:
+If the token is invalid or expired, the API returns:
 
 ```text
 401 Unauthorized
 ```
 
+If the user's account has been deactivated, the API returns:
+
+```text
+403 Forbidden
+```
+
+This means that deactivating an already logged-in user also prevents them from continuing to access protected resources.
+
 ---
 
-# 🛡️ Role-Based Authorization
+# Password Reset
+
+The application includes a password recovery system.
+
+The flow works as follows:
+
+1. The user requests a password reset.
+2. The backend generates a secure reset token.
+3. The token is stored with an expiration time.
+4. An email containing the reset link is sent using Resend.
+5. The user opens the reset link.
+6. The new password is validated and securely hashed.
+7. The password is updated in the database.
+8. The reset token is cleared.
+
+Password reset tokens are temporary and expire after the configured period.
+
+---
+
+# Role-Based Authorization
 
 After authentication, the user's role is checked before accessing protected resources.
 
-The system uses middleware to restrict endpoints based on roles.
-
-For example:
+The application currently supports:
 
 ```text
-Patient → Own information
-Doctor  → Appointment management
-Admin   → Administrative operations
+Patient → Own profile, appointments, and transactions
+
+Doctor  → Appointment management and authorized patient information
+
+Admin   → User, patient, appointment, and transaction management
 ```
 
 If an authenticated user does not have permission to access a resource, the API returns:
@@ -264,9 +320,11 @@ If an authenticated user does not have permission to access a resource, the API 
 403 Forbidden
 ```
 
+Ownership checks are also used where necessary. For example, a patient cannot request another patient's private appointments or transactions.
+
 ---
 
-# 🔐 API Key Protection
+# API Key Protection
 
 Protected API routes can also require an API key.
 
@@ -276,23 +334,13 @@ The key is sent through the request header:
 x-api-key: <your-api-key>
 ```
 
-The API key is stored in the `.env` file and is not hard-coded into the application.
+The API key is stored in environment variables and is not hard-coded into the application.
 
-Requests without a key return:
-
-```text
-401 Unauthorized
-```
-
-Requests with an incorrect key return:
-
-```text
-403 Forbidden
-```
+Requests without a valid API key are rejected by the API-key middleware.
 
 ---
 
-# 🌐 API Endpoints
+# API Endpoints
 
 ## Users
 
@@ -304,13 +352,26 @@ POST /api/users
 
 Creates a new user.
 
+Supported roles:
+
+```text
+patient
+doctor
+admin
+```
+
+When a patient is created, the patient's date of birth and blood group are also stored in the patient table.
+
 Example:
 
 ```json
 {
   "name": "John Doe",
   "email": "john@example.com",
-  "password": "password123"
+  "password": "password123",
+  "role": "patient",
+  "date_of_birth": "2001-08-20",
+  "blood_group": "O+"
 }
 ```
 
@@ -333,6 +394,8 @@ Example:
 }
 ```
 
+Deactivated accounts cannot log in.
+
 ---
 
 ### Get My Profile
@@ -351,7 +414,41 @@ Authorization: Bearer <token>
 
 ---
 
-# 🧑‍⚕️ Patient API
+### Update User
+
+```http
+PUT /api/users/:id
+```
+
+Updates user information such as name, email, and role.
+
+Role changes are handled so that patient records remain consistent with the user's role.
+
+---
+
+### Deactivate User
+
+```http
+PATCH /api/users/:id/deactivate
+```
+
+Deactivates a user account.
+
+A deactivated user cannot log in and cannot continue accessing protected resources using an existing session.
+
+---
+
+### Reactivate User
+
+```http
+PATCH /api/users/:id/reactivate
+```
+
+Reactivates a previously deactivated user account.
+
+---
+
+# Patient API
 
 ### Get Patients
 
@@ -405,9 +502,11 @@ Example:
 }
 ```
 
+Patient profiles require a date of birth. Blood group is optional.
+
 ---
 
-# 📅 Appointment API
+# Appointment API
 
 ### Create Appointment
 
@@ -422,7 +521,7 @@ Creates an appointment for a patient.
 * Doctor
 * Admin
 
-The doctor is determined from the authenticated user's JWT instead of trusting a `doctor_id` supplied by the client.
+The doctor is determined from the authenticated user's identity instead of trusting a `doctor_id` supplied by the client.
 
 Example:
 
@@ -434,6 +533,8 @@ Example:
 }
 ```
 
+The API prevents appointments from being created in the past and prevents a doctor from having multiple appointments at the same date and time.
+
 ---
 
 ### Get Appointments
@@ -441,6 +542,8 @@ Example:
 ```http
 GET /api/appointments
 ```
+
+Returns appointments available to the authenticated user's role.
 
 Doctors can view their own appointments, while administrators can access the appointment list.
 
@@ -505,11 +608,11 @@ completed
 cancelled
 ```
 
-The API prevents invalid date/time updates and prevents inappropriate status changes.
+The API validates appointment dates and times and prevents invalid status changes.
 
 ---
 
-# 💳 Transaction API
+# Transaction API
 
 ### Create Transaction
 
@@ -595,13 +698,13 @@ completed
 cancelled
 ```
 
-A transaction that is no longer `pending` cannot be updated.
+A transaction that is no longer pending cannot be updated.
 
 ---
 
-# 🗄️ Database
+# Database
 
-The application uses **PostgreSQL** as its relational database.
+The application uses PostgreSQL as its relational database.
 
 The main tables are:
 
@@ -612,11 +715,13 @@ appointments
 transactions
 ```
 
+The database is hosted using Neon PostgreSQL in production.
+
 ---
 
 ## Users Table
 
-Stores user information, login credentials, and roles.
+Stores user information, authentication details, account status, and roles.
 
 ```text
 users
@@ -625,14 +730,17 @@ users
 ├── email
 ├── password
 ├── role
+├── is_active
 └── created_at
 ```
+
+The `is_active` field is used to control whether an account can access the application.
 
 ---
 
 ## Patients Table
 
-Stores additional information about patients.
+Stores information specific to patients.
 
 ```text
 patients
@@ -648,7 +756,7 @@ Each patient profile is connected to a user.
 
 ## Appointments Table
 
-Stores doctor appointments.
+Stores appointments between patients and doctors.
 
 ```text
 appointments
@@ -661,9 +769,9 @@ appointments
 └── created_at
 ```
 
-Appointments connect patients with doctors.
+An appointment belongs to one patient and one doctor.
 
-A unique database constraint prevents the same doctor from having two appointments at the same date and time.
+A database constraint prevents the same doctor from having two appointments at the same date and time.
 
 ---
 
@@ -683,21 +791,18 @@ transactions
 
 ---
 
-# 🔗 Database Relationships
+# Database Relationships
 
 ```text
 users
   │
+  │
   │ 1
-  │
-  │
   ▼
 patients
   │
-  │ 1
   │
   ├───────────────┐
-  │               │
   │               │
   ▼               ▼
 appointments   transactions
@@ -716,12 +821,13 @@ users
 * A patient can have multiple transactions.
 * An appointment belongs to one patient and one doctor.
 * A transaction belongs to one patient.
+* Patient information is linked to the corresponding user through `user_id`.
 
 ---
 
-# ✅ Validation
+# Validation
 
-Incoming data is validated before it reaches the database.
+Incoming data is validated before reaching the database.
 
 The application validates things such as:
 
@@ -736,14 +842,15 @@ The application validates things such as:
 * Future appointment dates
 * Future appointment times
 * Valid update requests
+* Duplicate email addresses
 
-Validation is handled through separate middleware.
+Validation is handled through separate middleware where appropriate.
 
-This keeps the controllers focused on application logic instead of putting all validation inside the controllers.
+Keeping validation separate from controllers makes the backend easier to maintain and keeps the controllers focused on application logic.
 
 ---
 
-# ⚠️ Error Handling
+# Error Handling
 
 The backend uses centralized error-handling middleware.
 
@@ -765,11 +872,15 @@ The API uses appropriate HTTP status codes for common situations.
 | `404`  | Resource not found      |
 | `409`  | Conflict                |
 
-For example, attempting to create an appointment when the doctor already has an appointment at the same date and time returns a `409 Conflict`.
+For example, attempting to create an appointment when the doctor already has an appointment at the same date and time returns:
+
+```text
+409 Conflict
+```
 
 ---
 
-# 🔒 Security
+# Security
 
 Security is an important part of the project.
 
@@ -784,16 +895,19 @@ The backend uses:
 * **Input validation**
 * **Environment variables**
 * **Parameterized SQL queries**
+* **Protected routes**
+* **Centralized error handling**
+* **Account activation/deactivation checks**
 
 Parameterized queries are used when communicating with PostgreSQL to reduce the risk of SQL injection.
 
-Sensitive values such as database passwords and JWT secrets are kept outside the source code.
+Sensitive values such as database credentials, API keys, JWT secrets, and email service credentials are stored in environment variables rather than being hard-coded into the application.
 
 ---
 
-# ⚙️ Environment Variables
+# Environment Variables
 
-The backend uses a `.env` file for configuration.
+The backend uses environment variables for configuration.
 
 Example:
 
@@ -806,9 +920,11 @@ DB_NAME=hospital_db
 PORT=3000
 JWT_SECRET=your_jwt_secret
 API_KEY=your_api_key
+RESEND_API_KEY=your_resend_api_key
+CLIENT_URL=http://localhost:5173
 ```
 
-> Do not commit the `.env` file to GitHub.
+The actual values should never be committed to GitHub.
 
 The `.gitignore` file should contain:
 
@@ -817,14 +933,16 @@ node_modules/
 .env
 ```
 
+For production, the environment variables are configured through the deployment platform.
+
 ---
 
-# 🚀 Running the Backend
+# Running the Backend Locally
 
 Clone the project and move into the backend directory:
 
 ```bash
-cd backend
+cd F:\Hospital-Backend
 ```
 
 Install dependencies:
@@ -833,7 +951,7 @@ Install dependencies:
 npm install
 ```
 
-Create a `.env` file and configure the PostgreSQL database and authentication variables.
+Create a `.env` file and configure the required database and authentication variables.
 
 Start the server:
 
@@ -849,36 +967,12 @@ http://localhost:3000
 
 ---
 
-# 💻 Frontend
-
-The frontend is being developed using React.
-
-Its main purpose is to provide a simple interface for interacting with the hospital management API.
-
-Planned frontend functionality includes:
-
-* Login and registration
-* Role-based dashboards
-* Patient dashboard
-* Doctor dashboard
-* Admin dashboard
-* Patient profile management
-* Appointment management
-* Transaction management
-* API error handling
-* Authentication state management
-* Responsive design
-
-The frontend will communicate with the backend using HTTP requests and will use the authentication system provided by the backend.
-
----
-
-# ▶️ Running the Frontend
+# Running the Frontend Locally
 
 Move into the frontend directory:
 
 ```bash
-cd frontend
+cd hospital-management
 ```
 
 Install dependencies:
@@ -893,20 +987,93 @@ Start the development server:
 npm run dev
 ```
 
-The frontend development server will provide the local URL shown by Vite.
+Vite will provide the local frontend URL.
+
+The frontend uses environment variables to determine which backend API it communicates with.
 
 ---
 
-# 🧪 Testing
+# Frontend
 
-The backend has been tested for:
+The React frontend provides separate interfaces for the three user roles.
 
-* User registration
+### Patient
+
+Patients can:
+
+* View their dashboard
+* View their profile
+* View their appointments
+* View their transactions
+* Access only their own protected information
+
+### Doctor
+
+Doctors can:
+
+* View their dashboard
+* View appointments assigned to them
+* Create appointments
+* Update appointments
+* Access authorized patient information
+
+### Admin
+
+Administrators can:
+
+* View the admin dashboard
+* Manage users
+* Create users
+* Edit users
+* Change user roles
+* Activate and deactivate accounts
+* Manage patients
+* Manage appointments
+* Manage transactions
+
+The frontend uses protected routes and authentication state to control access to different sections of the application.
+
+---
+
+# Deployment
+
+The application is deployed for production use.
+
+### Frontend
+
+The React/Vite frontend is deployed using Vercel.
+
+### Backend
+
+The Node.js/Express backend is also deployed using Vercel.
+
+### Database
+
+The PostgreSQL database is hosted using Neon.
+
+The production frontend communicates with the deployed backend rather than the local development server.
+
+---
+
+# Testing
+
+The application has been manuually tested across its main workflows.
+
+Testing includes:
+
+* User creation
+* Patient creation
+* Doctor creation
+* Admin creation
 * User login
+* Invalid login attempts
 * JWT authentication
 * Role-based authorization
 * API-key protection
+* Password reset
+* Password reset email delivery
 * Patient access control
+* Doctor access control
 * Appointment creation
 * Appointment validation
 * Duplicate appointment prevention
@@ -916,14 +1083,17 @@ The backend has been tested for:
 * Transaction validation
 * Transaction access control
 * Transaction status changes
-* Invalid and expired authentication
-* Unauthorized access attempts
+* User deactivation
+* Blocking deactivated users
+* User reactivation
+* Frontend/backend communication
+* Production deployment
 
 ---
 
-# 🎯 Project Goals
+# Project Goals
 
-This project was created as a practical way to learn and apply full-stack development concepts.
+This project was built as a practical way to learn and apply full-stack development concepts.
 
 The main concepts covered include:
 
@@ -941,34 +1111,42 @@ The main concepts covered include:
 * API security
 * Input validation
 * Error handling
-* Frontend and backend communication
 * Role-based access control
+* Frontend and backend communication
+* Database transactions
+* Email-based password recovery
+* Production deployment
+
+The project also helped me understand how different parts of a real-world application work together rather than treating the frontend, backend, and database as completely separate projects.
 
 ---
 
-# 🔮 Future Improvements
+# Future Improvements
 
-The project will continue to evolve.
+Although the core application is functional, there are still areas that can be improved over time.
 
-Planned improvements include:
+Possible future improvements include:
 
-* Complete React frontend
-* Role-based dashboards
-* Better UI/UX
-* Appointment calendar
-* Doctor and patient management interfaces
-* Improved transaction interface
-* More advanced validation
-* API documentation
-* Automated testing
-* Deployment of the complete application
-* Production-ready security improvements
-* Responsive design for different screen sizes
+* Automated backend testing
+* Automated frontend testing
+* More comprehensive API documentation
+* Improved UI/UX
+* More advanced dashboard statistics
+* Appointment calendar views
+* Additional hospital management modules
+* Improved mobile experience
+* More detailed audit logging
+* Further production security hardening
+* Android application version using the existing React application
+
+These are future improvements rather than requirements for the current working version of the application.
 
 ---
 
-# 👨‍💻 Author
+# Author
 
-**Syed Muhammad Yahya**
+*Syed Muhammad Yahya*
 
-This project is part of my journey into full-stack development, with a focus on learning how real-world applications are designed, secured, connected to databases, and built from frontend to backend.
+I built this project as part of my journey into full-stack development. The goal was to move beyond individual tutorials and build a complete application that connects a React frontend, Express REST API, PostgreSQL database, authentication, authorization, validation, and production deployment.
+
+The project gave me practical experience with designing APIs, working with relational databases, protecting resources, handling real application errors, and deploying a full-stack application.
