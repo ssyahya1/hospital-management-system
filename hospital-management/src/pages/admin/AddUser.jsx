@@ -7,6 +7,8 @@ const AddUser = () => {
         email: "",
         password: "",
         role: "patient",
+        date_of_birth: "",
+        blood_group: "",
     });
 
     const [message, setMessage] = useState("");
@@ -30,10 +32,29 @@ const AddUser = () => {
         setLoading(true);
 
         try {
-            const data = await api.post("/api/users", formData);
+            const dataToSend = {
+                name: formData.name,
+                email: formData.email,
+                password: formData.password,
+                role: formData.role,
+            };
+
+            if (formData.role === "patient") {
+                dataToSend.date_of_birth =
+                    formData.date_of_birth;
+
+                dataToSend.blood_group =
+                    formData.blood_group || null;
+            }
+
+            const data = await api.post(
+                "/api/users",
+                dataToSend
+            );
 
             setMessage(
-                data.message || "User created successfully."
+                data.message ||
+                "User created successfully."
             );
 
             setFormData({
@@ -41,11 +62,14 @@ const AddUser = () => {
                 email: "",
                 password: "",
                 role: "patient",
+                date_of_birth: "",
+                blood_group: "",
             });
 
         } catch (error) {
             setError(
-                error.message || "Failed to create user."
+                error.message ||
+                "Failed to create user."
             );
         } finally {
             setLoading(false);
@@ -58,8 +82,10 @@ const AddUser = () => {
             <div className="page-header">
                 <div>
                     <h1>Add User</h1>
+
                     <p>
-                        Create a new patient, doctor, or administrator account.
+                        Create a new patient, doctor, or
+                        administrator account.
                     </p>
                 </div>
             </div>
@@ -144,6 +170,78 @@ const AddUser = () => {
                         </select>
                     </div>
 
+                    {formData.role === "patient" && (
+                        <>
+                            <div className="form-group">
+                                <label htmlFor="date_of_birth">
+                                    Date of Birth
+                                </label>
+
+                                <input
+                                    id="date_of_birth"
+                                    name="date_of_birth"
+                                    type="date"
+                                    value={
+                                        formData.date_of_birth
+                                    }
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="blood_group">
+                                    Blood Group
+                                </label>
+
+                                <select
+                                    id="blood_group"
+                                    name="blood_group"
+                                    value={
+                                        formData.blood_group
+                                    }
+                                    onChange={handleChange}
+                                >
+                                    <option value="">
+                                        Select blood group
+                                    </option>
+
+                                    <option value="A+">
+                                        A+
+                                    </option>
+
+                                    <option value="A-">
+                                        A-
+                                    </option>
+
+                                    <option value="B+">
+                                        B+
+                                    </option>
+
+                                    <option value="B-">
+                                        B-
+                                    </option>
+
+                                    <option value="AB+">
+                                        AB+
+                                    </option>
+
+                                    <option value="AB-">
+                                        AB-
+                                    </option>
+
+                                    <option value="O+">
+                                        O+
+                                    </option>
+
+                                    <option value="O-">
+                                        O-
+                                    </option>
+                                </select>
+                            </div>
+                        </>
+                    )}
+
                     {error && (
                         <div className="error-message">
                             {error}
@@ -160,11 +258,15 @@ const AddUser = () => {
                         type="submit"
                         disabled={loading}
                     >
-                        {loading ? "Creating User..." : "Create User"}
+                        {loading
+                            ? "Creating User..."
+                            : "Create User"}
                     </button>
 
                 </form>
+
             </div>
+
         </div>
     );
 };

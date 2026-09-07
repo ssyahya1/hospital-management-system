@@ -9,19 +9,40 @@ export const createUsers = async (req, res, next) => {
     const client = await pool.connect();
 
     try {
-        const { name, email, password, role } = req.body;
+        const {
+            name,
+            email,
+            password,
+            role,
+            date_of_birth,
+            blood_group
+        } = req.body;
 
         if (!name || !email || !password || !role) {
             return res.status(400).json({
-                message: "Name, email, password and role are required"
+                message:
+                    "Name, email, password and role are required"
             });
         }
 
-        const allowedRoles = ["patient", "doctor", "admin"];
+        const allowedRoles = [
+            "patient",
+            "doctor",
+            "admin"
+        ];
 
         if (!allowedRoles.includes(role)) {
             return res.status(400).json({
-                message: "Invalid role. Use patient, doctor, or admin"
+                message:
+                    "Invalid role. Use patient, doctor, or admin"
+            });
+        }
+
+        // Patient-specific validation
+        if (role === "patient" && !date_of_birth) {
+            return res.status(400).json({
+                message:
+                    "Date of birth is required for patients"
             });
         }
 
@@ -32,52 +53,75 @@ export const createUsers = async (req, res, next) => {
 
         if (existingUser.rows.length > 0) {
             return res.status(409).json({
-                message: "A user with this email already exists"
+                message:
+                    "A user with this email already exists"
             });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(
+            password,
+            10
+        );
 
         await client.query("BEGIN");
 
         const result = await client.query(
             `
-            INSERT INTO users (name, email, password, role)
-            VALUES ($1, $2, $3, $4)
-            RETURNING id, name, email, role, is_active, created_at
+            INSERT INTO users
+                (name, email, password, role)
+            VALUES
+                ($1, $2, $3, $4)
+            RETURNING
+                id,
+                name,
+                email,
+                role,
+                is_active,
+                created_at
             `,
-            [name, email, hashedPassword, role]
+            [
+                name,
+                email,
+                hashedPassword,
+                role
+            ]
         );
 
         const newUser = result.rows[0];
 
-        // Create a patient record automatically
-        // when the new user's role is patient.
+        // Automatically create patient record
         if (role === "patient") {
             await client.query(
                 `
-                INSERT INTO patients (user_id)
-                VALUES ($1)
+                INSERT INTO patients
+                    (user_id, date_of_birth, blood_group)
+                VALUES
+                    ($1, $2, $3)
                 `,
-                [newUser.id]
+                [
+                    newUser.id,
+                    date_of_birth,
+                    blood_group || null
+                ]
             );
         }
 
         await client.query("COMMIT");
 
         res.status(201).json({
-            message: "User created successfully",
+            message:
+                "User created successfully",
             user: newUser
         });
 
     } catch (error) {
         await client.query("ROLLBACK");
         next(error);
+
     } finally {
         client.release();
     }
 };
-
 export const loginUser = async (req, res, next) => {
     try {
         const { email, password } = req.body;
