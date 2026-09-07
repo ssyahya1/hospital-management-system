@@ -146,6 +146,14 @@ export const loginUser = async (req, res, next) => {
                 message: "Invalid email or password"
             });
         }
+         // Check if the account is active
+        if (!user.is_active) {
+            return res.status(403).json({
+                message:
+                    "Your account has been deactivated. Please contact an administrator."
+            });
+        }
+
 
         const token = jwt.sign(
             {
