@@ -26,29 +26,62 @@ export const getPatients = async (req, res, next) => {
         next(error);
     }
 };
-
 export const createPatient = async (req, res, next) => {
     try {
         const { user_id, date_of_birth, blood_group } = req.body;
+
+        if (!user_id || !date_of_birth) {
+            return res.status(400).json({
+                message: "User ID and date of birth are required"
+            });
+        }
+
+        const userResult = await pool.query(
+            `
+            SELECT id, role
+            FROM users
+            WHERE id = $1
+            `,
+            [user_id]
+        );
+
+        if (userResult.rows.length === 0) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+
+        if (userResult.rows[0].role !== "patient") {
+            return res.status(400).json({
+                message: "The selected user must have the patient role"
+            });
+        }
+
         const result = await pool.query(
-            `INSERT INTO patients (user_id, date_of_birth, blood_group)
+            `
+            INSERT INTO patients (user_id, date_of_birth, blood_group)
             VALUES ($1, $2, $3)
-            RETURNING *`,
-    [user_id, date_of_birth, blood_group]
-); res.status(201).json({
+            RETURNING *
+            `,
+            [user_id, date_of_birth, blood_group]
+        );
+
+        res.status(201).json({
             message: "Patient created successfully",
             user: result.rows[0]
         });
-    }catch (error) {
-         if (error.code === "23505") {
-        return res.status(409).json({
-            message: "Patient already exists for this user"
-        });
-    }
-        next(error);
-    }};
 
-    export const getMyProfile = async (req, res, next) => {
+    } catch (error) {
+        if (error.code === "23505") {
+            return res.status(409).json({
+                message: "Patient already exists for this user"
+            });
+        }
+
+        next(error);
+    }
+};
+  export const getMyProfile = async (req, res, next) => {
     try {
         const result = await pool.query(
             `

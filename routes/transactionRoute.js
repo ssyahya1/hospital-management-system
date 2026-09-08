@@ -9,7 +9,7 @@ import {
 } from "../controllers/transactionController.js";
 
 import { validateTransaction } from "../middleware/validateTransaction.js";
-import { apiKeyMiddleware } from "../middleware/apiKeyMiddleware.js";
+
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { authorizeRoles } from "../middleware/roleMiddleware.js";
 import { validateTransactionUpdate } from "../middleware/validateTransactionUpdate.js";
@@ -18,7 +18,7 @@ const router = express.Router();
 
 router.post(
     "/",
-    apiKeyMiddleware,
+    
     authMiddleware,
     authorizeRoles("admin"),
     validateTransaction,
@@ -27,7 +27,7 @@ router.post(
 
 router.get(
     "/",
-    apiKeyMiddleware,
+   
     authMiddleware,
     authorizeRoles("admin"),
     getTransactions
@@ -35,7 +35,7 @@ router.get(
 );
 router.get(
     "/me",
-    apiKeyMiddleware,
+    
     authMiddleware,
     authorizeRoles("patient"),
     getMyTransactions
@@ -43,14 +43,14 @@ router.get(
 
 router.get(
     "/:id",
-    apiKeyMiddleware,
+    
     authMiddleware,
     getTransactionById
 );
 
 router.patch(
     "/:id",
-    apiKeyMiddleware,
+
     authMiddleware,
     authorizeRoles("admin"),
     validateTransactionUpdate,

@@ -14,27 +14,29 @@ import {
 
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { adminMiddleware } from "../middleware/adminMiddleware.js";
-import { apiKeyMiddleware } from "../middleware/apiKeyMiddleware.js";
+import { authRateLimiter } from "../middleware/rateLimitMiddleware.js";
 
 const router = express.Router();
 
 // Admin can create users
-router.post("/", apiKeyMiddleware,authMiddleware, adminMiddleware, createUsers);
+router.post("/", 
+    authMiddleware, adminMiddleware, createUsers);
 
 // Login
-router.post("/login", loginUser);
-router.post("/forgot-password", forgotPassword);
-router.post("/reset-password", resetPassword);
+router.post("/login",authRateLimiter, loginUser);
+router.post("/forgot-password",authRateLimiter, forgotPassword);
+router.post("/reset-password",authRateLimiter, resetPassword);
 
 // Get logged-in user's profile
 router.get("/me", authMiddleware, getMyProfile);
 
 // Get all users
-router.get("/", apiKeyMiddleware, authMiddleware, adminMiddleware, getUsers);
+router.get("/",
+     authMiddleware, adminMiddleware, getUsers);
 
 router.put(
     "/:id",
-    apiKeyMiddleware,
+    
     authMiddleware,
     adminMiddleware,
     updateUser
@@ -42,7 +44,7 @@ router.put(
 
 router.put(
     "/:id/deactivate",
-    apiKeyMiddleware,
+    
     authMiddleware,
     adminMiddleware,
     deactivateUser
@@ -50,7 +52,7 @@ router.put(
 
 router.put(
     "/:id/reactivate",
-    apiKeyMiddleware,
+    
     authMiddleware,
     adminMiddleware,
     reactivateUser

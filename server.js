@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
 import userRoutes from "./routes/userRoutes.js";
 import patientRoutes from "./routes/patientRoutes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
@@ -7,6 +8,7 @@ import transactionRoutes from "./routes/transactionRoute.js";
 import appointmentRoutes from "./routes/appointmentRoutes.js";
 
 const app = express();
+app.use(helmet());
 
 const allowedOrigins = [
   process.env.CLIENT_URL,
@@ -20,8 +22,7 @@ app.use(
             if (
         !origin ||
         origin === "http://localhost:5173" ||
-        allowedOrigins.includes(origin) ||
-        origin.endsWith(".vercel.app")
+        allowedOrigins.includes(origin)
       ) 
       {
         callback(null, true);
@@ -31,7 +32,7 @@ app.use(
     },
     credentials: true,
     methods: ["GET", "POST", "PUT","PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "x-api-key"] // <-- Added x-api-key
+    allowedHeaders: ["Content-Type", "Authorization"] // <-- Added x-api-key
   })
 );
 app.use(express.json());

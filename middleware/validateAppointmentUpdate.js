@@ -56,16 +56,38 @@ export const validateAppointmentUpdate = async (req, res, next) => {
                     .slice(0, 5);
 
         // Validate doctor_id
-        if (doctor_id !== undefined) {
-            if (
-                typeof doctor_id !== "number" ||
-                doctor_id <= 0
-            ) {
-                return res.status(400).json({
-                    message: "Invalid doctor_id. It must be a positive number."
-                });
-            }
-        }
+        
+  if (doctor_id !== undefined) {
+    if (
+        typeof doctor_id !== "number" ||
+        doctor_id <= 0
+    ) {
+        return res.status(400).json({
+            message: "Invalid doctor_id. It must be a positive number."
+        });
+    }
+
+    const doctorResult = await pool.query(
+        `
+        SELECT id, role
+        FROM users
+        WHERE id = $1
+        `,
+        [doctor_id]
+    );
+
+    if (doctorResult.rows.length === 0) {
+        return res.status(404).json({
+            message: "Doctor not found"
+        });
+    }
+
+    if (doctorResult.rows[0].role !== "doctor") {
+        return res.status(400).json({
+            message: "The selected user is not a doctor"
+        });
+    }
+}
 
         // Validate appointment date
         if (appointment_date !== undefined) {

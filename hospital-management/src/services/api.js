@@ -1,12 +1,12 @@
 const API_URL = import.meta.env.VITE_API_URL;
-const API_KEY = import.meta.env.VITE_API_KEY;
+//const API_KEY = import.meta.env.VITE_API_KEY;
 
 const apiRequest = async (endpoint, options = {}) => {
   const token = localStorage.getItem("token");
 
   const headers = {
     "Content-Type": "application/json",
-    "x-api-key": API_KEY,
+    //"x-api-key": API_KEY,
     ...options.headers,
   };
 

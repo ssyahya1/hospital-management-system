@@ -122,9 +122,17 @@ export const createUsers = async (req, res, next) => {
         client.release();
     }
 };
+
 export const loginUser = async (req, res, next) => {
     try {
         const { email, password } = req.body;
+
+        // Validate required fields
+        if (!email || !password) {
+            return res.status(400).json({
+                message: "Email and password are required"
+            });
+        }
 
         const result = await pool.query(
             "SELECT * FROM users WHERE email = $1",
@@ -146,14 +154,14 @@ export const loginUser = async (req, res, next) => {
                 message: "Invalid email or password"
             });
         }
-         // Check if the account is active
+
+        // Check if the account is active
         if (!user.is_active) {
             return res.status(403).json({
                 message:
                     "Your account has been deactivated. Please contact an administrator."
             });
         }
-
 
         const token = jwt.sign(
             {
@@ -374,6 +382,10 @@ export const forgotPassword = async (req, res, next) => {
         const user = result.rows[0];
 
         const resetToken = crypto.randomBytes(32).toString("hex");
+        const hashedResetToken = crypto
+            .createHash("sha256")
+            .update(resetToken)
+            .digest("hex");
 
         const resetTokenExpires = new Date(
             Date.now() + 15 * 60 * 1000
@@ -386,7 +398,7 @@ export const forgotPassword = async (req, res, next) => {
                 reset_token_expires = $2
             WHERE id = $3
             `,
-            [resetToken, resetTokenExpires, user.id]
+            [hashedResetToken, resetTokenExpires, user.id]
         );
 
         const resetLink =
@@ -457,12 +469,16 @@ export const resetPassword = async (req, res, next) => {
             });
         }
 
-        if (password.length < 6) {
+        if (password.length < 8) {
             return res.status(400).json({
                 message:
-                    "Password must be at least 6 characters long"
+                    "Password must be at least 8 characters long"
             });
         }
+        const hashedResetToken = crypto
+                .createHash("sha256")
+                .update(token)
+                .digest("hex");
 
         const result = await pool.query(
             `
@@ -471,7 +487,7 @@ export const resetPassword = async (req, res, next) => {
             WHERE reset_token = $1
               AND reset_token_expires > NOW()
             `,
-            [token]
+            [hashedResetToken]
         );
 
         if (result.rows.length === 0) {
