@@ -12,7 +12,7 @@ app.use(helmet());
 
 const allowedOrigins = [
   process.env.CLIENT_URL,
-  "https://hospital-management-system-eta-brown-31.vercel.app",
+  "https://digital-hospital-system.vercel.app",
   "https://hospital-management-system-i8jg0rncd-syed-yahya.vercel.app"
 ].filter(Boolean);
 app.use(
